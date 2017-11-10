@@ -263,6 +263,7 @@ wdctl_stop(int fd)
     kill(pid, SIGINT);
 }
 
+//重启自己
 static void
 wdctl_restart(int afd)
 {

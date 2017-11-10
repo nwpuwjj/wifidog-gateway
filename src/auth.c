@@ -114,6 +114,8 @@ logout_client(t_client * client)
     client_free_node(client);
 }
 
+
+//到认证服务器那里去认证token
 /** Authenticates a single client against the central server and returns when done
  * Alters the firewall rules depending on what the auth server says
 @param r httpd request struct

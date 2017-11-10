@@ -304,7 +304,7 @@ init_signals(void)
 
     sa.sa_handler = sigchld_handler;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART;
+    sa.sa_flags = SA_RESTART;  //使被信号打断的系统调用自动重新发起
     if (sigaction(SIGCHLD, &sa, NULL) == -1) {
         debug(LOG_ERR, "sigaction(): %s", strerror(errno));
         exit(1);
@@ -316,7 +316,7 @@ init_signals(void)
      * and do nothing. The alternative is to exit. SIGPIPE are harmless
      * if not desirable.
      */
-    sa.sa_handler = SIG_IGN;
+    sa.sa_handler = SIG_IGN;  //SIG_IGN 忽略该信号
     if (sigaction(SIGPIPE, &sa, NULL) == -1) {
         debug(LOG_ERR, "sigaction(): %s", strerror(errno));
         exit(1);
@@ -419,6 +419,7 @@ main_loop(void)
 
     /* Start clean up thread */
     result = pthread_create(&tid_fw_counter, NULL, (void *)thread_client_timeout_check, NULL);
+    //check tid_fw_counter 检测链接是否有超时
     if (result != 0) {
         debug(LOG_ERR, "FATAL: Failed to create a new thread (fw_counter) - exiting");
         termination_handler(0);
@@ -500,7 +501,7 @@ gw_main(int argc, char **argv)
     parse_commandline(argc, argv);
 
     /* Initialize the config */
-    config_read(config->configfile);
+    config_read(config->configfile);  //read config from config file (keyword match )
     config_validate();
 
     /* Initializes the linked list of connected clients */
@@ -522,7 +523,8 @@ gw_main(int argc, char **argv)
             debug(LOG_INFO, "Waiting for parent PID %d to die before continuing loading", restart_orig_pid);
             sleep(1);
         }
-
+        //sig:准备发送的信号代码，假如其值为0则没有任何信号送出，但是系统会执行错误检查，通常会利用sig值为0来检验某个进程是否仍在执行
+        
         debug(LOG_INFO, "Parent PID %d seems to be dead. Continuing loading.");
     }
 

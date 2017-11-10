@@ -59,7 +59,7 @@ typedef struct _t_client {
 					     _http_* function is called */
     t_counters counters;                /**< @brief Counters for input/output of
 					     the client. */
-} t_client;
+} t_client;  //单向列表
 
 /** @brief Get a new client struct, not added to the list yet */
 t_client *client_get_new(void);

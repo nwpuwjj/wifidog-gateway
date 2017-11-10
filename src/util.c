@@ -351,6 +351,7 @@ icmp_ping(const char *host)
 
     packet.icmp.icmp_cksum = (j == 0xffff) ? j : ~j;
 
+    //设置2000字节的缓冲区 感觉此处代码写错，应该写SO_SENDBUF
     if (setsockopt(icmp_fd, SOL_SOCKET, SO_RCVBUF, &opt, sizeof(opt)) == -1)
         debug(LOG_ERR, "setsockopt(): %s", strerror(errno));
 

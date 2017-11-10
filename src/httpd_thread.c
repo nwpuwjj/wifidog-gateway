@@ -43,6 +43,13 @@
 #include "debug.h"
 #include "httpd_thread.h"
 
+/*
+获取用户浏览器发送过来的http报头
+分析http报头，分析是否包含关键路径
+不包含关键路径则调用404回调函数
+包含关键路径则执行关键路径回调函数（这里主要讲解"/wifidog/auth"路径）
+
+*/
 /** Main request handling thread.
 @param args Two item array of void-cast pointers to the httpd and request struct
 */

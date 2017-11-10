@@ -58,6 +58,14 @@
 #include "../config.h"
 
 
+/*
+判断本机是否处于离线状态
+判断认证服务器是否在线
+封装http 307报文
+发送于目标客户端
+
+*/
+//用户首次被重定向到这里
 /** The 404 handler is also responsible for redirecting to the auth server */
 void
 http_callback_404(httpd * webserver, request * r, int error_code)
@@ -160,6 +168,7 @@ http_callback_404(httpd * webserver, request * r, int error_code)
         }
 
         debug(LOG_INFO, "Captured %s requesting [%s] and re-directing them to login page", r->clientAddr, url);
+        //实际上此函数中通过socket返回一个307状态的http报头给客户端，里面包含有认证服务器地址 */
         http_send_redirect_to_auth(r, urlFragment, "Redirect to login page");
         free(urlFragment);
     }
@@ -200,6 +209,7 @@ http_callback_status(httpd * webserver, request * r)
     free(status);
 }
 
+//用户已通过认证服务器认证
 /** @brief Convenience function to redirect the web browser to the auth server
  * @param r The request
  * @param urlFragment The end of the auth server URL to redirect to (the part after path)
@@ -249,6 +259,10 @@ http_send_redirect(request * r, const char *url, const char *text)
     free(message);
 }
 
+/*
+此段表明当客户端已经在认证服务器确认登陆，认证服务器将客户端重新重定向回网关，并在重定向包中包含关键路径"/wifidog/auth"和token，认证服务器所执行的操作。
+
+*/
 void
 http_callback_auth(httpd * webserver, request * r)
 {

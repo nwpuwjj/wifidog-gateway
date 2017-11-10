@@ -816,10 +816,12 @@ httpdProcessRequest(httpd * server, request * r)
         *(cp + 1) = 0;
     dir = _httpd_findContentDir(server, dirName, HTTP_FALSE);
     if (dir == NULL) {
+        /* http报文中未包含关键路径，执行404回调函数（在404回调函数中新用户被重定向到认证服务器），见代码片段1.3 */
         _httpd_send404(server, r);
         _httpd_writeAccessLog(server, r);
         return;
     }
+     /* 获取关键路径内容描述符 */
     entry = _httpd_findContentEntry(r, dir, entryName);
     if (entry == NULL) {
         _httpd_send404(server, r);
@@ -835,6 +837,7 @@ httpdProcessRequest(httpd * server, request * r)
     switch (entry->type) {
     case HTTP_C_FUNCT:
     case HTTP_C_WILDCARD:
+         /* 如果是被认证服务器重定向到网关的用户，此处的关键路径为"/wifidog/auth"，并执行回调函数 */
         (entry->function) (server, r);
         break;
 

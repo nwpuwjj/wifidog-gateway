@@ -102,7 +102,7 @@ client_list_insert_client(t_client * client)
     prev_head = firstclient;
     client->next = prev_head;
     firstclient = client;
-}
+} //插到队伍最前面
 
 /** Based on the parameters it receives, this function creates a new entry
  * in the connections list. All the memory allocation is done here.

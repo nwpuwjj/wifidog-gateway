@@ -320,6 +320,7 @@ iptables_fw_init(void)
 
     iptables_do_command("-t nat -A " CHAIN_OUTGOING " -j " CHAIN_TO_INTERNET);
 
+    //对试用期或已认证的客户进行放行或者重定向到上网的接口
     if ((proxy_port = config_get_config()->proxy_port) != 0) {
         debug(LOG_DEBUG, "Proxy port set, setting proxy rule");
         iptables_do_command("-t nat -A " CHAIN_TO_INTERNET
@@ -340,6 +341,7 @@ iptables_fw_init(void)
         iptables_do_command("-t nat -A " CHAIN_UNKNOWN " -j " CHAIN_AUTH_IS_DOWN);
         iptables_do_command("-t nat -A " CHAIN_AUTH_IS_DOWN " -m mark --mark 0x%u -j ACCEPT", FW_MARK_AUTH_IS_DOWN);
     }
+    //在chain unkown 里重定向到认证服务器的端口
     iptables_do_command("-t nat -A " CHAIN_UNKNOWN " -p tcp --dport 80 -j REDIRECT --to-ports %d", gw_port);
 
     /*
@@ -378,7 +380,7 @@ iptables_fw_init(void)
                         " -o %s -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu", ext_interface);
 
     iptables_do_command("-t filter -A " CHAIN_TO_INTERNET " -j " CHAIN_AUTHSERVERS);
-    iptables_fw_set_authservers();
+    iptables_fw_set_authservers(); //发往认证服务器的数据包应该通过
 
     iptables_do_command("-t filter -A " CHAIN_TO_INTERNET " -m mark --mark 0x%u -j " CHAIN_LOCKED, FW_MARK_LOCKED);
     iptables_load_ruleset("filter", FWRULESET_LOCKED_USERS, CHAIN_LOCKED);
@@ -556,6 +558,8 @@ iptables_fw_destroy_mention(const char *table, const char *chain, const char *me
     return (deleted);
 }
 
+
+//更改mangle表
 /** Set if a specific client has access through the firewall */
 int
 iptables_fw_access(fw_access_t type, const char *ip, const char *mac, int tag)
@@ -640,6 +644,8 @@ iptables_fw_counters_update(void)
     t_client *p1;
     struct in_addr tempaddr;
 
+   
+    //在mangle表里抓流量
     /* Look for outgoing traffic */
     safe_asprintf(&script, "%s %s", "iptables", "-v -n -x -t mangle -L " CHAIN_OUTGOING);
     iptables_insert_gateway_id(&script);

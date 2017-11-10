@@ -318,6 +318,7 @@ _connect_auth_server(int level)
         memset(&(their_addr.sin_zero), '\0', sizeof(their_addr.sin_zero));
         free(h_addr);
 
+        //TCP 
         if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
             debug(LOG_ERR, "Level %d: Failed to create a new SOCK_STREAM socket: %s", level, strerror(errno));
             return (-1);

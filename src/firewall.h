@@ -34,8 +34,8 @@
 typedef enum _t_fw_marks {
     FW_MARK_NONE = 0, /**< @brief No mark set. */
     FW_MARK_PROBATION = 1, /**< @brief The client is in probation period and must be authenticated 
-			    @todo: VERIFY THAT THIS IS ACCURATE*/
-    FW_MARK_KNOWN = 2,  /**< @brief The client is known to the firewall */
+			    @todo: VERIFY THAT THIS IS ACCURATE*/ //试用期
+    FW_MARK_KNOWN = 2,  /**< @brief The client is known to the firewall */ //已认证
     FW_MARK_AUTH_IS_DOWN = 253, /**< @brief The auth servers are down */
     FW_MARK_LOCKED = 254 /**< @brief The client has been locked out */
 } t_fw_marks;
